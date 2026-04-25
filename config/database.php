@@ -17,7 +17,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'pgsql'),
+    'default' => env('DB_CONNECTION', 'landlord'),
 
     /*
     |--------------------------------------------------------------------------
@@ -97,6 +97,36 @@ return [
             'prefix_indexes' => true,
             'search_path' => 'public',
             'sslmode' => env('DB_SSLMODE', 'prefer'),
+        ],
+
+        'landlord' => [
+            'driver' => 'pgsql',
+            'url' => env('LANDLORD_DB_URL', env('DB_URL')),
+            'host' => env('LANDLORD_DB_HOST', env('DB_HOST', '127.0.0.1')),
+            'port' => env('LANDLORD_DB_PORT', env('DB_PORT', '5432')),
+            'database' => env('LANDLORD_DB_DATABASE', env('DB_DATABASE', 'crm_landlord')),
+            'username' => env('LANDLORD_DB_USERNAME', env('DB_USERNAME', 'root')),
+            'password' => env('LANDLORD_DB_PASSWORD', env('DB_PASSWORD', '')),
+            'charset' => env('LANDLORD_DB_CHARSET', env('DB_CHARSET', 'utf8')),
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'search_path' => env('LANDLORD_DB_SEARCH_PATH', 'public'),
+            'sslmode' => env('LANDLORD_DB_SSLMODE', env('DB_SSLMODE', 'prefer')),
+        ],
+
+        'tenant_template' => [
+            'driver' => 'pgsql',
+            'url' => env('TENANT_DB_URL', env('LANDLORD_DB_URL', env('DB_URL'))),
+            'host' => env('TENANT_DB_HOST', env('LANDLORD_DB_HOST', env('DB_HOST', '127.0.0.1'))),
+            'port' => env('TENANT_DB_PORT', env('LANDLORD_DB_PORT', env('DB_PORT', '5432'))),
+            'database' => env('TENANT_DB_DATABASE'),
+            'username' => env('TENANT_DB_USERNAME', env('LANDLORD_DB_USERNAME', env('DB_USERNAME', 'root'))),
+            'password' => env('TENANT_DB_PASSWORD', env('LANDLORD_DB_PASSWORD', env('DB_PASSWORD', ''))),
+            'charset' => env('TENANT_DB_CHARSET', env('LANDLORD_DB_CHARSET', env('DB_CHARSET', 'utf8'))),
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'search_path' => env('TENANT_DB_SEARCH_PATH', env('LANDLORD_DB_SEARCH_PATH', 'public')),
+            'sslmode' => env('TENANT_DB_SSLMODE', env('LANDLORD_DB_SSLMODE', env('DB_SSLMODE', 'prefer'))),
         ],
 
         'sqlsrv' => [

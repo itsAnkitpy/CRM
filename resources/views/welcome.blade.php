@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{ config('app.name', 'Highland Core') }} — Unified Sales & Support CRM</title>
+@php($landlordLoginUrl = route('filament.admin.auth.login'))
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -159,9 +160,9 @@
     </nav>
 
     <div class="flex items-center gap-2 sm:gap-4">
-      <a href="{{ url('/login') }}" class="hidden sm:inline-block text-sm font-medium text-navy hover:text-teal transition-colors px-2">Login</a>
-      <a href="{{ Route::has('register') ? route('register') : url('/register') }}" class="btn-shine bg-navy hover:bg-navy-light text-white px-4 sm:px-5 py-2.5 rounded-lg font-semibold text-sm transition-colors shadow-sm inline-flex items-center gap-2">
-        Start for free
+      <a href="{{ $landlordLoginUrl }}" class="hidden sm:inline-block text-sm font-medium text-navy hover:text-teal transition-colors px-2">Login</a>
+      <a href="{{ $landlordLoginUrl }}" class="btn-shine bg-navy hover:bg-navy-light text-white px-4 sm:px-5 py-2.5 rounded-lg font-semibold text-sm transition-colors shadow-sm inline-flex items-center gap-2">
+        Open admin login
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
       </a>
     </div>
@@ -194,8 +195,8 @@
         </p>
 
         <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 mb-10">
-          <a href="{{ Route::has('register') ? route('register') : url('/register') }}" class="btn-shine bg-teal hover:bg-teal-light text-white px-7 py-4 rounded-xl font-semibold transition-all shadow-glow inline-flex items-center justify-center gap-2">
-            Start for free
+          <a href="{{ $landlordLoginUrl }}" class="btn-shine bg-teal hover:bg-teal-light text-white px-7 py-4 rounded-xl font-semibold transition-all shadow-glow inline-flex items-center justify-center gap-2">
+            Log in to Highland Core
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
           </a>
           <a href="#product" class="bg-white border border-gray-200 hover:border-teal/40 text-navy px-7 py-4 rounded-xl font-semibold transition-all shadow-sm inline-flex items-center justify-center gap-3">
@@ -582,7 +583,7 @@
             </li>
           </ul>
 
-          <a href="{{ Route::has('register') ? route('register') : url('/register') }}" class="inline-flex items-center gap-2 text-teal-dark font-semibold hover:text-teal transition-colors group">
+          <a href="{{ $landlordLoginUrl }}" class="inline-flex items-center gap-2 text-teal-dark font-semibold hover:text-teal transition-colors group">
             See the full product tour
             <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
           </a>
@@ -823,8 +824,8 @@
           Join the teams replacing their patchwork of sales and support tools with a single, purpose-built workspace.
         </p>
         <div class="flex flex-col sm:flex-row justify-center items-stretch sm:items-center gap-3 sm:gap-4">
-          <a href="{{ Route::has('register') ? route('register') : url('/register') }}" class="btn-shine bg-teal hover:bg-teal-light text-white px-8 py-4 rounded-xl font-bold text-lg transition-all shadow-glow inline-flex items-center justify-center gap-2">
-            Create your free account
+          <a href="{{ $landlordLoginUrl }}" class="btn-shine bg-teal hover:bg-teal-light text-white px-8 py-4 rounded-xl font-bold text-lg transition-all shadow-glow inline-flex items-center justify-center gap-2">
+            Open admin login
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
           </a>
           <a href="#features" class="bg-white/5 hover:bg-white/10 border border-white/20 text-white px-8 py-4 rounded-xl font-bold text-lg transition-all inline-flex items-center justify-center gap-2">
