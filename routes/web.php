@@ -1,13 +1,16 @@
 <?php
 
+use App\Http\Controllers\LandingPageController;
+use Filament\Facades\Filament;
 use Illuminate\Support\Facades\Route;
 
-foreach (config('tenancy.central_domains', ['localhost']) as $domain) {
+foreach (config('domains.marketing_hosts', ['localhost']) as $domain) {
     Route::domain($domain)->group(function () {
-        Route::view('/', 'welcome');
+        Route::get('/', [LandingPageController::class, 'central'])
+            ->name('landing.central');
 
         Route::get('/login', function () {
-            return redirect()->route('filament.admin.auth.login');
-        });
+            return redirect()->to(Filament::getPanel('admin')->getLoginUrl());
+        })->name('landing.central.login');
     });
 }

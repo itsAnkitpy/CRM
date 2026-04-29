@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Exceptions\TenantProvisioningException;
+use App\Models\LandlordUser;
 use App\Services\Tenancy\TenantProvisioningService;
 use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
@@ -46,7 +47,9 @@ class ProvisionTenant extends Page
 
     public static function canAccess(): bool
     {
-        return auth()->check();
+        $user = auth()->user();
+
+        return $user instanceof LandlordUser && $user->canProvisionTenants();
     }
 
     public function getMaxContentWidth(): Width | string | null
@@ -93,8 +96,8 @@ class ProvisionTenant extends Page
                                 TextInput::make('domain')
                                     ->label('Primary Domain')
                                     ->maxLength(255)
-                                    ->placeholder('ourbpo.crm.local')
-                                    ->helperText('Leave blank to use <slug>.crm.local automatically.'),
+                                    ->placeholder('ourbpo.' . config('domains.tenant_base'))
+                                    ->helperText('Leave blank to use <slug>.' . config('domains.tenant_base') . ' automatically.'),
                                 TextInput::make('timezone')
                                     ->required()
                                     ->maxLength(64)

@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\LandlordUser;
 use App\Models\User;
 
 return [
@@ -16,8 +17,8 @@ return [
     */
 
     'defaults' => [
-        'guard' => env('AUTH_GUARD', 'web'),
-        'passwords' => env('AUTH_PASSWORD_BROKER', 'users'),
+        'guard' => env('AUTH_GUARD', 'landlord'),
+        'passwords' => env('AUTH_PASSWORD_BROKER', 'landlords'),
     ],
 
     /*
@@ -38,9 +39,19 @@ return [
     */
 
     'guards' => [
+        'landlord' => [
+            'driver' => 'session',
+            'provider' => 'landlord_users',
+        ],
+
+        'tenant' => [
+            'driver' => 'session',
+            'provider' => 'tenant_users',
+        ],
+
         'web' => [
             'driver' => 'session',
-            'provider' => 'users',
+            'provider' => 'landlord_users',
         ],
     ],
 
@@ -62,9 +73,19 @@ return [
     */
 
     'providers' => [
+        'landlord_users' => [
+            'driver' => 'eloquent',
+            'model' => env('AUTH_LANDLORD_MODEL', LandlordUser::class),
+        ],
+
+        'tenant_users' => [
+            'driver' => 'eloquent',
+            'model' => env('AUTH_TENANT_MODEL', User::class),
+        ],
+
         'users' => [
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', User::class),
+            'model' => env('AUTH_MODEL', LandlordUser::class),
         ],
 
         // 'users' => [
@@ -93,8 +114,22 @@ return [
     */
 
     'passwords' => [
+        'landlords' => [
+            'provider' => 'landlord_users',
+            'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+
+        'tenants' => [
+            'provider' => 'tenant_users',
+            'table' => env('AUTH_TENANT_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+
         'users' => [
-            'provider' => 'users',
+            'provider' => 'landlord_users',
             'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
             'expire' => 60,
             'throttle' => 60,

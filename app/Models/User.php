@@ -26,15 +26,16 @@ use Spatie\Permission\Traits\HasRoles;
     'last_seen_at',
 ])]
 #[Hidden(['password', 'remember_token'])]
-class User extends Authenticatable
-    implements FilamentUser
+class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, HasRoles, Notifiable;
 
+    protected string $guard_name = 'web';
+
     public function canAccessPanel(Panel $panel): bool
     {
-        return $panel->getId() === 'admin';
+        return $panel->getId() === 'tenant' && $this->status !== 'suspended';
     }
 
     /**

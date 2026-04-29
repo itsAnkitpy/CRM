@@ -9,9 +9,13 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+use Livewire\Features\SupportFileUploads\FilePreviewController;
+use Livewire\Features\SupportFileUploads\FileUploadController;
+use Livewire\Livewire;
 use Stancl\JobPipeline\JobPipeline;
 use Stancl\Tenancy\DatabaseConfig;
 use Stancl\Tenancy\Events;
+use Stancl\Tenancy\Features\UniversalRoutes;
 use Stancl\Tenancy\Jobs;
 use Stancl\Tenancy\Listeners;
 use Stancl\Tenancy\Middleware;
@@ -102,7 +106,9 @@ class TenancyServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->bootEvents();
+        $this->configureTenantIdentificationFailureHandling();
         $this->mapRoutes();
+        $this->configureLivewireTenancy();
 
         $this->makeTenancyMiddlewareHighestPriority();
     }
@@ -146,5 +152,39 @@ class TenancyServiceProvider extends ServiceProvider
         foreach (array_reverse($tenancyMiddleware) as $middleware) {
             $this->app[\Illuminate\Contracts\Http\Kernel::class]->prependToMiddlewarePriority($middleware);
         }
+    }
+
+    protected function configureTenantIdentificationFailureHandling(): void
+    {
+        Middleware\InitializeTenancyByDomain::$onFail = static function ($exception, $request, $next) {
+            if ($request->route() && UniversalRoutes::routeHasMiddleware($request->route(), 'universal')) {
+                return $next($request);
+            }
+
+            abort(404);
+        };
+    }
+
+    protected function configureLivewireTenancy(): void
+    {
+        $tenantMiddleware = [
+            'web',
+            'universal',
+            Middleware\InitializeTenancyByDomain::class,
+        ];
+
+        Livewire::setUpdateRoute(function ($handle, string $path) use ($tenantMiddleware) {
+            return Route::post($path, $handle)
+                ->middleware($tenantMiddleware);
+        });
+
+        FilePreviewController::$middleware = $tenantMiddleware;
+        FileUploadController::$defaultMiddleware = $tenantMiddleware;
+
+        config()->set('livewire.temporary_file_upload.middleware', [
+            'throttle:60,1',
+            'universal',
+            Middleware\InitializeTenancyByDomain::class,
+        ]);
     }
 }

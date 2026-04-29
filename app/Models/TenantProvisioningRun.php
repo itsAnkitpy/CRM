@@ -31,6 +31,6 @@ class TenantProvisioningRun extends Model
 
     public function triggeredByUser(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'triggered_by_user_id');
+        return $this->belongsTo(LandlordUser::class, 'triggered_by_user_id');
     }
 }

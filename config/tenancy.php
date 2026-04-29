@@ -5,6 +5,8 @@ declare(strict_types=1);
 use App\Models\Tenant;
 use App\Models\TenantDomain;
 
+$domainConfig = require __DIR__ . '/domains.php';
+
 return [
     'tenant_model' => Tenant::class,
     'id_generator' => Stancl\Tenancy\UUIDGenerator::class,
@@ -16,10 +18,7 @@ return [
      *
      * Only relevant if you're using the domain or subdomain identification middleware.
      */
-    'central_domains' => array_values(array_filter(array_map(
-        static fn (string $domain): string => trim($domain),
-        explode(',', (string) env('CENTRAL_DOMAINS', 'admin.crm.local,127.0.0.1,localhost'))
-    ))),
+    'central_domains' => $domainConfig['central'],
 
     /**
      * Tenancy bootstrappers are executed when tenancy is initialized.
@@ -136,7 +135,7 @@ return [
          * disable asset() helper tenancy and explicitly use tenant_asset() calls in places
          * where you want to use tenant-specific assets (product images, avatars, etc).
          */
-        'asset_helper_tenancy' => true,
+        'asset_helper_tenancy' => false,
     ],
 
     /**

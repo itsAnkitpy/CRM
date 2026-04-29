@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\TenantResource\Pages;
 use App\Filament\Resources\TenantResource\RelationManagers\DomainsRelationManager;
 use App\Filament\Resources\TenantResource\RelationManagers\ProvisioningRunsRelationManager;
+use App\Models\LandlordUser;
 use App\Models\Tenant;
 use Filament\Actions\ViewAction;
 use Filament\Infolists\Components\TextEntry;
@@ -46,12 +47,12 @@ class TenantResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return auth()->check();
+        return static::landlordUser()?->canViewTenants() ?? false;
     }
 
     public static function canView(Model $record): bool
     {
-        return auth()->check();
+        return static::landlordUser()?->canViewTenants() ?? false;
     }
 
     public static function getEloquentQuery(): Builder
@@ -253,5 +254,12 @@ class TenantResource extends Resource
             'index' => Pages\ListTenants::route('/'),
             'view' => Pages\ViewTenant::route('/{record}'),
         ];
+    }
+
+    protected static function landlordUser(): ?LandlordUser
+    {
+        $user = auth()->user();
+
+        return $user instanceof LandlordUser ? $user : null;
     }
 }

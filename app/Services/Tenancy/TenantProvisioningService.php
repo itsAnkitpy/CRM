@@ -3,6 +3,7 @@
 namespace App\Services\Tenancy;
 
 use App\Exceptions\TenantProvisioningException;
+use App\Models\LandlordUser;
 use App\Models\Tenant;
 use App\Models\TenantProvisioningRun;
 use App\Models\User;
@@ -27,6 +28,7 @@ class TenantProvisioningService
         'landlord',
         'support',
         'status',
+        'hcore',
     ];
 
     public function provision(
@@ -61,7 +63,7 @@ class TenantProvisioningService
         );
 
         $slug = Str::lower($slug);
-        $domain ??= "{$slug}.crm.local";
+        $domain ??= $this->defaultDomainForSlug($slug);
         $databaseName = $this->databaseNameFromSlug($slug);
         $run = null;
 
@@ -102,7 +104,7 @@ class TenantProvisioningService
 
             $tenant->createDomain([
                 'domain' => $domain,
-                'kind' => $domain === "{$slug}.crm.local" ? 'subdomain' : 'custom',
+                'kind' => $domain === $this->defaultDomainForSlug($slug) ? 'subdomain' : 'custom',
                 'is_primary' => true,
                 'is_verified' => true,
             ]);
@@ -282,7 +284,7 @@ class TenantProvisioningService
             'region' => ['required', 'string', 'max:32'],
             'currency_code' => ['required', 'string', 'size:3'],
             'country_code' => ['nullable', 'string', 'size:2'],
-            'triggered_by_user_id' => ['nullable', 'integer', 'exists:users,id'],
+            'triggered_by_user_id' => ['nullable', 'integer', 'exists:landlord.users,id'],
         ])->validate();
 
         if (in_array($slug, self::RESERVED_SLUGS, true)) {
@@ -296,10 +298,19 @@ class TenantProvisioningService
         if ($domain && \App\Models\TenantDomain::query()->where('domain', $domain)->exists()) {
             throw new InvalidArgumentException("The domain [{$domain}] is already in use.");
         }
+
+        if ($triggeredByUserId && ! LandlordUser::query()->whereKey($triggeredByUserId)->exists()) {
+            throw new InvalidArgumentException("The triggering landlord user [{$triggeredByUserId}] does not exist.");
+        }
     }
 
     protected function databaseNameFromSlug(string $slug): string
     {
         return 'crm_tenant_' . Str::of($slug)->replace('-', '_');
+    }
+
+    protected function defaultDomainForSlug(string $slug): string
+    {
+        return Str::lower($slug) . '.' . config('domains.tenant_base');
     }
 }

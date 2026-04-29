@@ -46,7 +46,7 @@ return new class extends Migration
         DB::statement(<<<'SQL'
             ALTER TABLE tenants
             ADD CONSTRAINT tenants_slug_reserved_check
-            CHECK (slug NOT IN ('admin', 'api', 'app', 'www', 'landlord', 'support', 'status'))
+            CHECK (slug NOT IN ('admin', 'api', 'app', 'www', 'landlord', 'support', 'status', 'hcore'))
         SQL);
     }
 
